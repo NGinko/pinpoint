@@ -17,6 +17,7 @@
 package com.navercorp.pinpoint.plugin.httpclient3.interceptor;
 
 import com.navercorp.pinpoint.bootstrap.config.HttpDumpConfig;
+import com.navercorp.pinpoint.bootstrap.context.*;
 import com.navercorp.pinpoint.bootstrap.plugin.request.ClientHeaderAdaptor;
 import com.navercorp.pinpoint.bootstrap.plugin.request.ClientRequestAdaptor;
 import com.navercorp.pinpoint.bootstrap.plugin.request.ClientRequestRecorder;
@@ -38,11 +39,6 @@ import com.navercorp.pinpoint.plugin.httpclient3.HttpClient3CookieExtractor;
 import org.apache.commons.httpclient.HttpConnection;
 import org.apache.commons.httpclient.HttpMethod;
 
-import com.navercorp.pinpoint.bootstrap.context.MethodDescriptor;
-import com.navercorp.pinpoint.bootstrap.context.SpanEventRecorder;
-import com.navercorp.pinpoint.bootstrap.context.Trace;
-import com.navercorp.pinpoint.bootstrap.context.TraceContext;
-import com.navercorp.pinpoint.bootstrap.context.TraceId;
 import com.navercorp.pinpoint.bootstrap.interceptor.AroundInterceptor;
 import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScope;
 import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScopeInvocation;
@@ -115,6 +111,14 @@ public class HttpMethodBaseExecuteMethodInterceptor implements AroundInterceptor
         final Trace trace = traceContext.currentRawTraceObject();
         if (trace == null) {
             return;
+        }
+        // pressTag
+        PressDetail pressDetail = traceContext.getPressDetailFromThreadLocal();
+        if (pressDetail != null && Boolean.TRUE.equals(pressDetail.getPressFlag())) {
+            if (target instanceof HttpMethod) {
+                final HttpMethod httpMethod = (HttpMethod) target;
+                this.requestTraceWriter.writePressHeader(httpMethod);
+            }
         }
 
         if (!trace.canSampled()) {

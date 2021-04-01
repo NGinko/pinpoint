@@ -16,6 +16,7 @@
 
 package com.navercorp.pinpoint.plugin.httpclient4.interceptor;
 
+import com.navercorp.pinpoint.bootstrap.context.*;
 import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScope;
 import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScopeInvocation;
 import com.navercorp.pinpoint.bootstrap.plugin.request.ClientHeaderAdaptor;
@@ -40,11 +41,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 
-import com.navercorp.pinpoint.bootstrap.context.MethodDescriptor;
-import com.navercorp.pinpoint.bootstrap.context.SpanEventRecorder;
-import com.navercorp.pinpoint.bootstrap.context.Trace;
-import com.navercorp.pinpoint.bootstrap.context.TraceContext;
-import com.navercorp.pinpoint.bootstrap.context.TraceId;
 import com.navercorp.pinpoint.bootstrap.interceptor.AroundInterceptor;
 import com.navercorp.pinpoint.bootstrap.logging.PLogger;
 import com.navercorp.pinpoint.bootstrap.logging.PLoggerFactory;
@@ -101,6 +97,12 @@ public class HttpRequestExecutorExecuteMethodInterceptor implements AroundInterc
 
         final HttpRequest httpRequest = getHttpRequest(args);
         final NameIntValuePair<String> host = getHost();
+
+        // pressTag
+        PressDetail pressDetail = traceContext.getPressDetailFromThreadLocal();
+        if(pressDetail!=null && Boolean.TRUE.equals(pressDetail.getPressFlag())){
+            this.requestTraceWriter.writePressHeader(httpRequest);
+        }
         final boolean sampling = trace.canSampled();
         if (!sampling) {
             if (httpRequest != null) {

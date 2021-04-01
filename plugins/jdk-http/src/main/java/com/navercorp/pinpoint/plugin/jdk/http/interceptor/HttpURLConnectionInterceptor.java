@@ -71,11 +71,7 @@ public class HttpURLConnectionInterceptor implements AroundInterceptor {
         if (isDebug) {
             logger.beforeInterceptor(target, args);
         }
-        //不论是DisableTrace类型还是常规的trace类型，都需要通过currentRawTraceObject来获取trace对象，以此来获取需要的对象
         Trace trace = traceContext.currentRawTraceObject();
-        /**
-         * 从额外的threadLocal获取压测标记
-         */
         if (trace == null) {
             return;
         }
@@ -92,6 +88,13 @@ public class HttpURLConnectionInterceptor implements AroundInterceptor {
 
         if (connected || connecting) {
             return;
+        }
+        /**
+         * 从pressThreadLocal获取压测标记
+         */
+        PressDetail pressDetail = traceContext.getPressDetailFromThreadLocal();
+        if(pressDetail!=null && Boolean.TRUE.equals(pressDetail.getPressFlag())){
+            this.requestTraceWriter.writePressHeader(request);
         }
 
         final boolean sampling = trace.canSampled();

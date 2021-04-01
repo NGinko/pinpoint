@@ -79,7 +79,12 @@ public class DefaultTraceFactory implements TraceFactory {
     // continue to trace the request that has been determined to be sampled on previous nodes
     @Override
     public Trace continueTraceObject(final TraceId traceId) {
+        //这里的reference需要和trace进行绑定，来获取后面需要修改的header
         final Reference<Trace> reference = checkAndGet();
+        /**
+         * checkAndGet是对ThreadLocal的线程绑定的变量进行一次判断
+         * 获取的reference需要保证里面之前没有没添加过TraceId
+         **/
         final Trace trace = this.baseTraceFactory.continueTraceObject(traceId);
 
         bind(reference, trace);

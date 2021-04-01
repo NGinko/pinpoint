@@ -44,6 +44,10 @@ public class JdkHttpPlugin implements ProfilerPlugin, TransformTemplateAware {
         transformTemplate.transform("sun.net.www.protocol.http.HttpURLConnection", HttpURLConnectionTransform.class);
     }
 
+    /**
+     * 插件会给指定类注册TransformCallbak类。类加载器在加载类时，如果该类名上有注册TransformCallBack，那么就会调用到TransformCallback的doInTansform方法，对类进行字节码注入。
+     *然后会将修改后的的字节码返回给类加载器。需要做的就是在指定类的方法中，记录tx，spanId等参数
+     */
     public static class HttpURLConnectionTransform implements TransformCallback {
 
         @Override

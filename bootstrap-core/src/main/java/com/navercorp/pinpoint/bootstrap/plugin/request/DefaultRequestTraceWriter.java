@@ -55,6 +55,7 @@ public class DefaultRequestTraceWriter<T> implements RequestTraceWriter<T> {
         }
     }
 
+    //只是为了处理采样的请求 ， 只写 Pinpoint-Sampled 请求头
     @Override
     public void write(T header) {
         if (isDebug) {
@@ -63,6 +64,7 @@ public class DefaultRequestTraceWriter<T> implements RequestTraceWriter<T> {
         clientHeaderAdaptor.setHeader(header, Header.HTTP_SAMPLED.toString(), SamplingFlagUtils.SAMPLING_RATE_FALSE);
     }
 
+    //实际上只修改Http_Header
     // Set transaction information in the request.
     @Override
     public void write(T header, final TraceId traceId, final String host) {
@@ -85,5 +87,10 @@ public class DefaultRequestTraceWriter<T> implements RequestTraceWriter<T> {
         if (host != null) {
             clientHeaderAdaptor.setHeader(header, Header.HTTP_HOST.toString(), host);
         }
+    }
+
+    @Override
+    public void writePressHeader(T header) {
+        clientHeaderAdaptor.setHeader(header, Header.HTTP_PRESS_TAG.toString(), SamplingFlagUtils.SAMPLING_RATE_FALSE);
     }
 }

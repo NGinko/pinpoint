@@ -16,6 +16,7 @@
 
 package com.navercorp.pinpoint.bootstrap.plugin.request;
 
+import com.navercorp.pinpoint.bootstrap.context.Trace;
 import com.navercorp.pinpoint.bootstrap.context.TraceId;
 
 /**
@@ -26,4 +27,7 @@ public interface RequestTraceWriter<T> {
 
     // Set transaction information in the request.
     void write(T header, TraceId traceId, String host);
+
+    //Press Test Head Writer
+    void writePressHeader(T header);
 }

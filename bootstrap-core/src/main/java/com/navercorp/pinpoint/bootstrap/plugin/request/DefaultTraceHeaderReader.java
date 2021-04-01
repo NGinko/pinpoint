@@ -52,7 +52,7 @@ public class DefaultTraceHeaderReader<T> implements TraceHeaderReader<T> {
         final String transactionId = requestAdaptor.getHeader(request, Header.HTTP_TRACE_ID.toString());
         // TODO miss validation check
         if (transactionId == null) {
-            return NewTraceHeader.INSTANCE;
+            return NewTraceHeader.INSTANCE; // 不进行采样标记直接创建DisableTrace 。 并绑定到Thread Local中
         }
         final String parentSpanIdStr = requestAdaptor.getHeader(request, Header.HTTP_PARENT_SPAN_ID.toString());
         if (parentSpanIdStr == null) {

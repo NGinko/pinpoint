@@ -16,6 +16,7 @@
 
 package com.navercorp.pinpoint.bootstrap.plugin.request;
 
+import com.navercorp.pinpoint.bootstrap.context.Header;
 import com.navercorp.pinpoint.bootstrap.context.Trace;
 import com.navercorp.pinpoint.bootstrap.context.TraceContext;
 import com.navercorp.pinpoint.bootstrap.context.TraceId;
@@ -52,9 +53,23 @@ public class RequestTraceReader<T> {
         this.nameSpaceChecker = NameSpaceCheckFactory.newNamespace(requestAdaptor, applicationNamespace);
     }
 
+    /**
+     * 针对采样标记处理，判断采样的状态，不采样的就不传递transactionID了
+     * 不采样head是pinpoint-sampler:s0
+     * 和隔壁的DefaultTraceHeaderReader不一样, 隔壁的HeaderReader主要是获取Transaction ， SpanID 根据不同的情况进行声明
+     * 声明的Trace用来追踪， 用来区分不进行采样和新来的请求，。如果是上层传递过来的请求（就是包含了TransactionID和spanID），就封装再传下去就好了
+     * @param request
+     * @return
+     */
     // Read the transaction information from the request.
     public Trace read(T request) {
         Assert.requireNonNull(request, "request");
+
+        //压测头需要比采样判断更早，否则碰到需要不需要采样的情况，会丢失相关的标记
+        final String pressTag = requestAdaptor.getHeader(request , Header.HTTP_PRESS_TAG.toString());
+        if(("true").equals(pressTag)){
+
+        }
 
         final TraceHeader traceHeader = traceHeaderReader.read(request);
         // Check sampling flag from client. If the flag is false, do not sample this request.

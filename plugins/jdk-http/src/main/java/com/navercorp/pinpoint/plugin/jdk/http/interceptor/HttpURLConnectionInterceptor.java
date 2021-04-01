@@ -40,7 +40,6 @@ import java.net.URL;
 public class HttpURLConnectionInterceptor implements AroundInterceptor {
     /**
      * 一个事物由一组spans构成。每个span代表请求经历的一个单独的逻辑节点
-     *
      */
     private static final Object TRACE_BLOCK_BEGIN_MARKER = new Object();
     private final PLogger logger = PLoggerFactory.getLogger(this.getClass());
@@ -72,7 +71,11 @@ public class HttpURLConnectionInterceptor implements AroundInterceptor {
         if (isDebug) {
             logger.beforeInterceptor(target, args);
         }
+        //不论是DisableTrace类型还是常规的trace类型，都需要通过currentRawTraceObject来获取trace对象，以此来获取需要的对象
         Trace trace = traceContext.currentRawTraceObject();
+        /**
+         * 从额外的threadLocal获取压测标记
+         */
         if (trace == null) {
             return;
         }

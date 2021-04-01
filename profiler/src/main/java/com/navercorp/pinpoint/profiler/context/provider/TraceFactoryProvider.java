@@ -18,6 +18,7 @@ package com.navercorp.pinpoint.profiler.context.provider;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.navercorp.pinpoint.bootstrap.context.Presser;
 import com.navercorp.pinpoint.bootstrap.context.Trace;
 import com.navercorp.pinpoint.common.util.Assert;
 import com.navercorp.pinpoint.profiler.context.Binder;
@@ -38,12 +39,17 @@ public class TraceFactoryProvider implements Provider<TraceFactory> {
 
     private final Provider<BaseTraceFactory> baseTraceFactoryProvider;
 
+    //ZhangYB create for saving pressHeader
+    private final Presser presser;
+
 
     @Inject
-    public TraceFactoryProvider(Provider<BaseTraceFactory> baseTraceFactoryProvider, Binder<Trace> binder) {
+    public TraceFactoryProvider(Provider<BaseTraceFactory> baseTraceFactoryProvider, Binder<Trace> binder, Presser presser ) {
 
         this.baseTraceFactoryProvider = Assert.requireNonNull(baseTraceFactoryProvider, "baseTraceFactoryProvider");
         this.binder = Assert.requireNonNull(binder, "binder");
+
+        this.presser = Assert.requireNonNull(presser, "binder");
 
     }
 
@@ -51,8 +57,9 @@ public class TraceFactoryProvider implements Provider<TraceFactory> {
     public TraceFactory get() {
 
         final BaseTraceFactory baseTraceFactory = baseTraceFactoryProvider.get();
+        //考虑在这里注入的时候初始化一个threadLocal
 
-        TraceFactory traceFactory = new DefaultTraceFactory(baseTraceFactory, binder);
+        TraceFactory traceFactory = new DefaultTraceFactory(baseTraceFactory, binder,presser);
 
         return traceFactory;
     }

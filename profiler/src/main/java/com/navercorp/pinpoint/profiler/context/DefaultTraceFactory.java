@@ -16,6 +16,7 @@
 
 package com.navercorp.pinpoint.profiler.context;
 
+import com.navercorp.pinpoint.bootstrap.context.Presser;
 import com.navercorp.pinpoint.bootstrap.context.Trace;
 import com.navercorp.pinpoint.bootstrap.context.TraceId;
 import com.navercorp.pinpoint.common.annotations.InterfaceAudience;
@@ -37,9 +38,13 @@ public class DefaultTraceFactory implements TraceFactory {
 
     private final BaseTraceFactory baseTraceFactory;
 
-    public DefaultTraceFactory(BaseTraceFactory baseTraceFactory, Binder<Trace> binder) {
+    private final Presser threadLocalPresser;
+
+    public DefaultTraceFactory(BaseTraceFactory baseTraceFactory, Binder<Trace> binder, Presser threadLocalPresser) {
         this.baseTraceFactory = Assert.requireNonNull(baseTraceFactory, "baseTraceFactory");
         this.threadLocalBinder = Assert.requireNonNull(binder, "binder");
+
+        this.threadLocalPresser = threadLocalPresser;
     }
 
     /**
@@ -157,5 +162,10 @@ public class DefaultTraceFactory implements TraceFactory {
 
         bind(reference, trace);
         return trace;
+    }
+
+    @Override
+    public Presser currentPressThreadLocal() {
+        return this.threadLocalPresser ;
     }
 }

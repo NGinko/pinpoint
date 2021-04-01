@@ -16,6 +16,7 @@
 
 package com.navercorp.pinpoint.profiler.context;
 
+import com.navercorp.pinpoint.bootstrap.context.Presser;
 import com.navercorp.pinpoint.bootstrap.context.Trace;
 import com.navercorp.pinpoint.bootstrap.context.TraceId;
 import com.navercorp.pinpoint.common.annotations.InterfaceAudience;
@@ -45,4 +46,7 @@ public interface TraceFactory {
 
     @InterfaceAudience.LimitedPrivate("vert.x")
     Trace newAsyncTraceObject();
+
+    //get Press-ThreadLocal for adding pressTag
+    Presser currentPressThreadLocal();
 }

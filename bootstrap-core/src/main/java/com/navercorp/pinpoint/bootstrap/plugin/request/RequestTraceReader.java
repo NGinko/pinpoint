@@ -16,10 +16,7 @@
 
 package com.navercorp.pinpoint.bootstrap.plugin.request;
 
-import com.navercorp.pinpoint.bootstrap.context.Header;
-import com.navercorp.pinpoint.bootstrap.context.Trace;
-import com.navercorp.pinpoint.bootstrap.context.TraceContext;
-import com.navercorp.pinpoint.bootstrap.context.TraceId;
+import com.navercorp.pinpoint.bootstrap.context.*;
 import com.navercorp.pinpoint.bootstrap.logging.PLogger;
 import com.navercorp.pinpoint.bootstrap.logging.PLoggerFactory;
 import com.navercorp.pinpoint.bootstrap.plugin.request.util.NameSpaceCheckFactory;
@@ -65,13 +62,16 @@ public class RequestTraceReader<T> {
     public Trace read(T request) {
         Assert.requireNonNull(request, "request");
 
-        //压测头需要比采样判断更早，否则碰到需要不需要采样的情况，会丢失相关的标记
-        final String pressTag = requestAdaptor.getHeader(request , Header.HTTP_PRESS_TAG.toString());
-        if(("true").equals(pressTag)){
+        final TraceHeader traceHeader = traceHeaderReader.read(request);
 
+        //压测头需要比采样判断更早，否则碰到需要不需要采样的情况，会丢失相关的标记
+        //ZhangYB:get press Tag here and add into new threadLocal
+        boolean pressExist = pressHeaderExist(request);
+        if(pressExist){//add press tag into threadLocal
+            PressDetail pressDetail = PressDetail.builder().setPressFlag(true).build();
+            traceContext.addPressTagIntoThreadLocal(pressDetail);
         }
 
-        final TraceHeader traceHeader = traceHeaderReader.read(request);
         // Check sampling flag from client. If the flag is false, do not sample this request.
         final TraceHeaderState state = traceHeader.getState();
         if (state == TraceHeaderState.DISABLE) {
@@ -149,5 +149,14 @@ public class RequestTraceReader<T> {
             return this.traceContext.newAsyncTraceObject();
         }
         return this.traceContext.newTraceObject();
+    }
+
+    // PRESS-TEST:true
+    private boolean pressHeaderExist(final T request) {
+        final String pressHeaderFlag = requestAdaptor.getHeader(request, Header.HTTP_PRESS_TAG.toString());
+        if (isDebug) {
+            logger.debug("PRESS-TEST={}", pressHeaderFlag);
+        }
+        return pressHeaderFlag != null && "true".equals(pressHeaderFlag);
     }
 }

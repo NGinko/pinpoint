@@ -98,4 +98,9 @@ public interface TraceContext {
 
     JdbcContext getJdbcContext();
 
+    //add pressTag with pressDetail into ThreadLocal
+    boolean addPressTagIntoThreadLocal(PressDetail presser);
+
+    PressDetail getPressDetailFromThreadLocal();
+
 }

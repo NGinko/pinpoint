@@ -16,6 +16,7 @@
 
 package com.navercorp.pinpoint.profiler.context.module;
 
+import com.navercorp.pinpoint.bootstrap.context.Presser;
 import com.navercorp.pinpoint.bootstrap.context.ServerMetaDataHolder;
 import com.navercorp.pinpoint.bootstrap.context.Trace;
 import com.navercorp.pinpoint.bootstrap.context.TraceContext;
@@ -60,6 +61,7 @@ import com.navercorp.pinpoint.profiler.context.monitor.DataSourceMonitorRegistry
 import com.navercorp.pinpoint.profiler.context.monitor.DefaultJdbcContext;
 import com.navercorp.pinpoint.profiler.context.monitor.JdbcUrlParsingService;
 import com.navercorp.pinpoint.profiler.context.monitor.metric.CustomMetricRegistryService;
+import com.navercorp.pinpoint.profiler.context.press.ThreadLocalPresser;
 import com.navercorp.pinpoint.profiler.context.provider.ActiveTraceRepositoryProvider;
 import com.navercorp.pinpoint.profiler.context.provider.AgentInfoFactoryProvider;
 import com.navercorp.pinpoint.profiler.context.provider.AgentInfoSenderProvider;
@@ -167,6 +169,15 @@ public class ApplicationContextModule extends AbstractModule {
 
         final TypeLiteral<Binder<Trace>> binder = new TypeLiteral<Binder<Trace>>() {};
         final TypeLiteral<ThreadLocalBinder<Trace>> threadLocalBinder = new TypeLiteral<ThreadLocalBinder<Trace>>() {};
+
+        //参考agent本身的初始化流程，在此阶段对保存pressHead的ThreadLocal进行初始化
+        //依赖于Guice框架，需要提供空构造函数。或者是Provider
+        final TypeLiteral<Presser> presser = new TypeLiteral<Presser>() {};
+        final TypeLiteral<ThreadLocalPresser> threadLocalPresser = new TypeLiteral<ThreadLocalPresser>() {
+        };
+        bind(presser).to(threadLocalPresser).in(Scopes.SINGLETON);
+
+
         bind(binder).to(threadLocalBinder).in(Scopes.SINGLETON);
         bind(TraceContext.class).toProvider(TraceContextProvider.class).in(Scopes.SINGLETON);
         bind(AsyncTraceContext.class).toProvider(AsyncTraceContextProvider.class).in(Scopes.SINGLETON);
@@ -233,9 +244,14 @@ public class ApplicationContextModule extends AbstractModule {
         bind(PredefinedMethodDescriptorRegistry.class).to(DefaultPredefinedMethodDescriptorRegistry.class).in(Scopes.SINGLETON);
     }
 
+    //IOC 太多
+
     // Proxy
     private void bindRequestRecorder() {
         bind(ProxyRequestParserLoaderService.class).toProvider(ProxyRequestParserLoaderServiceProvider.class).in(Scopes.SINGLETON);
         bind(RequestRecorderFactory.class).to(DefaultRequestRecorderFactory.class).in(Scopes.SINGLETON);
     }
+
+    //如果想要吧其他的threadLocal对象注入进来，需要添加bind
+
 }

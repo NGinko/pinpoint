@@ -17,12 +17,7 @@
 package com.navercorp.pinpoint.profiler.context;
 
 import com.navercorp.pinpoint.bootstrap.config.ProfilerConfig;
-import com.navercorp.pinpoint.bootstrap.context.MethodDescriptor;
-import com.navercorp.pinpoint.bootstrap.context.ParsingResult;
-import com.navercorp.pinpoint.bootstrap.context.ServerMetaDataHolder;
-import com.navercorp.pinpoint.bootstrap.context.Trace;
-import com.navercorp.pinpoint.bootstrap.context.TraceContext;
-import com.navercorp.pinpoint.bootstrap.context.TraceId;
+import com.navercorp.pinpoint.bootstrap.context.*;
 import com.navercorp.pinpoint.bootstrap.plugin.jdbc.JdbcContext;
 import com.navercorp.pinpoint.common.annotations.InterfaceAudience;
 import com.navercorp.pinpoint.common.util.Assert;
@@ -237,6 +232,22 @@ public class DefaultTraceContext implements TraceContext {
     @Override
     public JdbcContext getJdbcContext() {
         return jdbcContext;
+    }
+
+    @Override
+    public boolean addPressTagIntoThreadLocal(PressDetail pressDetail){
+        Presser presserThreadLocal = traceFactory.currentPressThreadLocal();
+        if(presserThreadLocal!=null){
+            presserThreadLocal.put(pressDetail);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    //获取
+    public PressDetail getPressDetailFromThreadLocal(){
+        return traceFactory.currentPressThreadLocal().get();
     }
 
 }

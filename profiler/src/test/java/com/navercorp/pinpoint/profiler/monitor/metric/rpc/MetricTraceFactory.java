@@ -73,6 +73,11 @@ public class MetricTraceFactory implements TraceFactory {
     }
 
     @Override
+    public Presser currentPressThreadLocal() {
+        return delegate.currentPressThreadLocal();
+    }
+
+    @Override
     public Trace continueAsyncTraceObject(TraceId traceId) {
         return delegate.continueAsyncTraceObject(traceId);
     }

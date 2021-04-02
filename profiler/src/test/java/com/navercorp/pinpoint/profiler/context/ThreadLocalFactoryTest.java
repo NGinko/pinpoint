@@ -16,8 +16,10 @@
 
 package com.navercorp.pinpoint.profiler.context;
 
+import com.navercorp.pinpoint.bootstrap.context.Presser;
 import com.navercorp.pinpoint.bootstrap.context.Trace;
 import com.navercorp.pinpoint.exception.PinpointException;
+import com.navercorp.pinpoint.profiler.context.press.ThreadLocalPresser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,7 +54,10 @@ public abstract class ThreadLocalFactoryTest {
 
         Binder<Trace> binder = new ThreadLocalBinder<Trace>();
 
-        TraceFactory traceFactory = new DefaultTraceFactory(baseTraceFactory, binder);
+        Presser presser = new ThreadLocalPresser();
+
+        //add press ThreadLocal test
+        TraceFactory traceFactory = new DefaultTraceFactory(baseTraceFactory, binder, presser);
         return traceFactory;
     }
 

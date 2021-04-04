@@ -91,6 +91,6 @@ public class DefaultRequestTraceWriter<T> implements RequestTraceWriter<T> {
 
     @Override
     public void writePressHeader(T header) {
-        clientHeaderAdaptor.setHeader(header, Header.HTTP_PRESS_TAG.toString(), SamplingFlagUtils.SAMPLING_RATE_FALSE);
+        clientHeaderAdaptor.setHeader(header, Header.HTTP_PRESS_TAG.toString(), Boolean.TRUE.toString());
     }
 }

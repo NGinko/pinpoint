@@ -135,6 +135,8 @@ public class DefaultTraceFactory implements TraceFactory {
     @Override
     public Trace removeTraceObject() {
         final Reference<Trace> reference = this.threadLocalBinder.get();
+        //del pressDetail
+        this.threadLocalPresser.remove();
         final Trace trace = reference.clear();
         return trace;
     }

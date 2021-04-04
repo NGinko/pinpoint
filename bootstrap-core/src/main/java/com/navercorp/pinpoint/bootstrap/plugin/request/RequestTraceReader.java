@@ -68,7 +68,7 @@ public class RequestTraceReader<T> {
         //ZhangYB:get press Tag here and add into new threadLocal
         boolean pressExist = pressHeaderExist(request);
         if(pressExist){//add press tag into threadLocal
-            PressDetail pressDetail = PressDetail.builder().setPressFlag(true).build();
+            PressDetail pressDetail = PressDetail.builder().setPressFlag(Boolean.TRUE).build();
             traceContext.addPressTagIntoThreadLocal(pressDetail);
         }
 

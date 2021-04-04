@@ -26,6 +26,7 @@ import com.navercorp.pinpoint.bootstrap.context.TraceContext;
 import com.navercorp.pinpoint.bootstrap.logging.PLogger;
 import com.navercorp.pinpoint.bootstrap.logging.PLoggerFactory;
 import com.navercorp.pinpoint.bootstrap.plugin.RequestRecorderFactory;
+import com.navercorp.pinpoint.bootstrap.plugin.http.HttpHeadersRecorder;
 import com.navercorp.pinpoint.bootstrap.plugin.http.HttpStatusCodeRecorder;
 import com.navercorp.pinpoint.bootstrap.plugin.proxy.ProxyHttpHeaderRecorder;
 import com.navercorp.pinpoint.bootstrap.plugin.proxy.ProxyRequestRecorder;
@@ -57,6 +58,9 @@ public class ServletRequestListenerInterceptorHelper<T> {
     private final RequestRecorderFactory<T> requestRecorderFactory;
     private final ProxyRequestRecorder<T> proxyRequestRecorder;
 
+    //for adding header
+    private final HttpHeadersRecorder<T> headersRecorder;
+
     @Deprecated
     public ServletRequestListenerInterceptorHelper(final ServiceType serviceType, final TraceContext traceContext, RequestAdaptor<T> requestAdaptor, final Filter<String> excludeUrlFilter, ParameterRecorder<T> parameterRecorder) {
         this(serviceType, traceContext, requestAdaptor, excludeUrlFilter, parameterRecorder, null);
@@ -79,6 +83,7 @@ public class ServletRequestListenerInterceptorHelper<T> {
         this.serverRequestRecorder = new ServerRequestRecorder<T>(requestAdaptor);
         this.httpStatusCodeRecorder = new HttpStatusCodeRecorder(traceContext.getProfilerConfig().getHttpStatusCodeErrors());
 
+        this.headersRecorder = new HttpHeadersRecorder(requestAdaptor);
         this.traceContext.cacheApi(SERVLET_SYNC_METHOD_DESCRIPTOR);
     }
 
@@ -130,6 +135,7 @@ public class ServletRequestListenerInterceptorHelper<T> {
             this.serverRequestRecorder.record(recorder, request);
             // record proxy HTTP header.
             this.proxyRequestRecorder.record(recorder, request);
+            this.headersRecorder.record(recorder,request);
         }
         return trace;
     }

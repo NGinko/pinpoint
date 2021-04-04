@@ -200,6 +200,9 @@ public interface AnnotationKey {
     AnnotationKey HTTP_IO = AnnotationKeyFactory.of(49, "http.io", VIEW_IN_RECORD_SET);
     // post method parameter of httpclient
 
+    //add new key for header displaying in detail
+    AnnotationKey REQUEST_HEADER = AnnotationKeyFactory.of(901,"request.header",VIEW_IN_RECORD_SET);
+
     AnnotationKey MESSAGE_QUEUE_URI = AnnotationKeyFactory.of(100, "message.queue.url");
 
     AnnotationKey ARGS0 = AnnotationKeyFactory.of(-1, "args[0]");

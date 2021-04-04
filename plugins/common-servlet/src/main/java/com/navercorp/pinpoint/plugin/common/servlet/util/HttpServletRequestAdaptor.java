@@ -16,16 +16,18 @@
 
 package com.navercorp.pinpoint.plugin.common.servlet.util;
 
+import com.navercorp.pinpoint.bootstrap.plugin.request.HttpHeadersRequestAdaptor;
 import com.navercorp.pinpoint.bootstrap.plugin.request.RequestAdaptor;
 import com.navercorp.pinpoint.bootstrap.util.NetworkUtils;
 import com.navercorp.pinpoint.common.plugin.util.HostAndPort;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /**
  * @author Woonduk Kang(emeroad)
  */
-public class HttpServletRequestAdaptor implements RequestAdaptor<HttpServletRequest> {
+public class HttpServletRequestAdaptor implements RequestAdaptor<HttpServletRequest> , HttpHeadersRequestAdaptor<HttpServletRequest> {
 
     public HttpServletRequestAdaptor() {
     }
@@ -57,5 +59,30 @@ public class HttpServletRequestAdaptor implements RequestAdaptor<HttpServletRequ
         StringBuffer url = request.getRequestURL();
         final String acceptorHost = url != null ? NetworkUtils.getHostFromURL(url.toString()) : null;
         return acceptorHost;
+    }
+
+    @Override
+    public String getHeaders(HttpServletRequest request) {
+        StringBuffer sb = new StringBuffer("{");
+        Enumeration headerNames = request.getHeaderNames();
+        while(headerNames.hasMoreElements()){
+            creatJsonPartString(request, sb, headerNames);
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    private void creatJsonPartString(HttpServletRequest request, StringBuffer sb, Enumeration headerNames) {
+        String headerName = (String) headerNames.nextElement();
+        addQuotAround(sb,headerName);
+        sb.append(":");
+        addQuotAround(sb, request.getHeader(headerName));
+        sb.append(",");
+    }
+
+    private void addQuotAround(StringBuffer sb , String keyWord){
+        sb.append("\"");
+        sb.append(keyWord);
+        sb.append("\"");
     }
 }

@@ -18,13 +18,14 @@ package com.navercorp.pinpoint.bootstrap.plugin.request.util;
 
 
 import com.navercorp.pinpoint.bootstrap.context.RemoteAddressResolver;
+import com.navercorp.pinpoint.bootstrap.plugin.request.HttpHeadersRequestAdaptor;
 import com.navercorp.pinpoint.bootstrap.plugin.request.RequestAdaptor;
 import com.navercorp.pinpoint.common.util.Assert;
 
 /**
  * @author Woonduk Kang(emeroad)
  */
-public class HeaderResolveRequestAdaptor<T> implements RequestAdaptor<T> {
+public class HeaderResolveRequestAdaptor<T> implements RequestAdaptor<T>, HttpHeadersRequestAdaptor<T> {
 
     private final RequestAdaptor<T> delegate;
     private final RemoteAddressResolver<T> remoteAddressResolver;
@@ -61,5 +62,10 @@ public class HeaderResolveRequestAdaptor<T> implements RequestAdaptor<T> {
     @Override
     public String getAcceptorHost(T request) {
         return delegate.getAcceptorHost(request);
+    }
+
+    @Override
+    public String getHeaders(T request) {
+        return this.delegate instanceof HttpHeadersRequestAdaptor ? ((HttpHeadersRequestAdaptor) this.delegate).getHeaders(request) : null;
     }
 }

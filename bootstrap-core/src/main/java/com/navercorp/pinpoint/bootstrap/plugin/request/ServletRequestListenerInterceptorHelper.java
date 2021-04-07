@@ -125,7 +125,7 @@ public class ServletRequestListenerInterceptorHelper<T> {
             }
             return null;
         }
-
+        //从request_header读取需要的transaction信息，根据请求的类型创建对应类型的trace对象
         final Trace trace = this.requestTraceReader.read(request);
         if (trace.canSampled()) {
             final SpanRecorder recorder = trace.getSpanRecorder();

@@ -64,6 +64,7 @@ public class WebappLoaderStartInterceptor implements AroundInterceptor {
             try {
                 String contextKey = extractContextKey(webappLoader);
                 List<String> loadedJarNames = extractLibJars(webappLoader);
+                // save engine and loaderJar info in Queue
                 dispatchLibJars(contextKey, loadedJarNames);
             } catch (Exception e) {
                 if (logger.isWarnEnabled()) {
@@ -81,6 +82,7 @@ public class WebappLoaderStartInterceptor implements AroundInterceptor {
             Container container = extractContext(webappLoader);
             // WebappLoader's associated Container should be a Context.
             if (container instanceof Context) {
+                //check condition for tomcat 8 getContext method .
                 Context context = (Context)container;
                 String contextName = context.getName();
                 Host host = (Host)container.getParent();

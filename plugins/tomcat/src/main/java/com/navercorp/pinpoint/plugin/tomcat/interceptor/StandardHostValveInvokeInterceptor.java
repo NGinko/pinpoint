@@ -82,6 +82,7 @@ public class StandardHostValveInvokeInterceptor implements AroundInterceptor {
                 // skip
                 return;
             }
+            //初始化TOMCAT插件的service_type  TOMCAT_METHOD .期间会创建trace
             this.servletRequestListenerInterceptorHelper.initialized(request, TomcatConstants.TOMCAT_METHOD, this.methodDescriptor);
         } catch (Throwable t) {
             if (isInfo) {

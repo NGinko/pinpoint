@@ -149,6 +149,7 @@ public class DefaultTraceContext implements TraceContext {
     @Override
     public Trace removeTraceObject(boolean closeUnsampledTrace) {
         final Trace trace = traceFactory.removeTraceObject();
+        //不能采样的Trace不进行追踪
         if (closeUnsampledTrace) {
             return closeUnsampledTrace(trace);
         } else {

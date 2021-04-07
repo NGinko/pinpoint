@@ -32,7 +32,7 @@ public interface TraceContext {
 
     /**
      * return a trace whose sampling rate should be further verified
-     * 
+     * 返回的trace对象的采样比率需要进一步验证
      * @return
      */
     Trace currentRawTraceObject();

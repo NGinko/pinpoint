@@ -97,6 +97,11 @@
         </dependency>
         <dependency>
             <groupId>com.navercorp.pinpoint</groupId>
+            <artifactId>pinpoint-other-jdbc-driver-plugin</artifactId>
+            <version>2.0.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.navercorp.pinpoint</groupId>
             <artifactId>pinpoint-commons-dbcp-plugin</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -39,6 +39,8 @@ public class DefaultPluginContextLoadResult implements PluginContextLoadResult {
         Assert.requireNonNull(pluginClassLoader, "pluginClassLoader");
         ProfilerPluginLoader profilerPluginLoader = new ProfilerPluginLoader();
         List<ProfilerPlugin> profilerPlugins = profilerPluginLoader.load(pluginClassLoader);
+        //下面的load是加载所有plugin下的profilePlugin的实现，同时为其注入TransformTemplate，再调用到plugin的setup方法。
+        //这样实现将自己的TransformCallback设置到ClassFileTransformerLoader中
         this.pluginsSetupResult = profilerPluginContextLoader.load(profilerPlugins);
     }
 

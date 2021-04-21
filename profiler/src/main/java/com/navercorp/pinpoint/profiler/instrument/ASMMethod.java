@@ -216,6 +216,7 @@ public class ASMMethod implements InstrumentMethod {
     }
 
     private int addInterceptor0(Interceptor interceptor) {
+        //获取到注册后的interceptor的id
         final int interceptorId = this.engineComponent.addInterceptor(interceptor);
 
         addInterceptor0(interceptor, interceptorId);

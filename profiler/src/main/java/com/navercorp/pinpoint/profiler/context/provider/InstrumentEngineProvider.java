@@ -65,9 +65,10 @@ public class InstrumentEngineProvider implements Provider<InstrumentEngine> {
 
     public InstrumentEngine get() {
         final String instrumentEngine = profilerConfig.getProfileInstrumentEngine().toUpperCase();
-        if (DefaultProfilerConfig.INSTRUMENT_ENGINE_ASM.equals(instrumentEngine)) {
+        if (DefaultProfilerConfig.INSTRUMENT_ENGINE_ASM.equals(instrumentEngine)) {  //要更换字节码引擎，对数据源切换类的需要做特殊处理
             logger.info("ASM InstrumentEngine");
 
+            //初始化不同类型的拦截器封装为List<TypeHandler>  TypeHandler包含自定义拦截器的相关信息
             // WARNING must be singleton
             final InterceptorDefinitionFactory interceptorDefinitionFactory = new InterceptorDefinitionFactory();
             // WARNING must be singleton

@@ -34,6 +34,7 @@ public class InterceptorDefinitionFactory {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final List<TypeHandler> detectHandlers;
 
+    //初始化时就注册全部类型的Interceptor
     public InterceptorDefinitionFactory() {
         this.detectHandlers = register();
     }
@@ -53,9 +54,12 @@ public class InterceptorDefinitionFactory {
     }
 
 
+    //这里对所有的拦截器类型进行替换  T_T
     private List<TypeHandler> register() {
         final List<TypeHandler> typeHandlerList = new ArrayList<TypeHandler>();
 
+
+        //对数据源切换功能需要重写拦截器
         addTypeHandler(typeHandlerList, AroundInterceptor.class, InterceptorType.ARRAY_ARGS);
 
         addTypeHandler(typeHandlerList, AroundInterceptor0.class, InterceptorType.BASIC);
@@ -166,6 +170,7 @@ public class InterceptorDefinitionFactory {
             return createInterceptorDefinition(casting);
         }
 
+        //这里用IgnoreMethod注解对增强的范围增加了选择
         private InterceptorDefinition createInterceptorDefinition(Class<? extends Interceptor> targetInterceptorClazz) {
 
             final Method beforeMethod = searchMethod(targetInterceptorClazz, before, beforeParamList);
@@ -181,7 +186,7 @@ public class InterceptorDefinitionFactory {
             }
             final boolean afterIgnoreMethod = afterMethod.isAnnotationPresent(IgnoreMethod.class);
 
-
+            //根据是否有前后置的方法，创建拦截器
             if (beforeIgnoreMethod == true && afterIgnoreMethod == true) {
                 return new DefaultInterceptorDefinition(interceptorClazz, targetInterceptorClazz, interceptorType, CaptureType.NON, null, null);
             }

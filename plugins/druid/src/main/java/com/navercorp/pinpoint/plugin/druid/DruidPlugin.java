@@ -108,6 +108,7 @@ public class DruidPlugin implements ProfilerPlugin, TransformTemplateAware {
 
                 // closeMethod
                 InstrumentMethod closeMethod = InstrumentUtils.findMethod(target, "close");
+                //todo 这部分加载拦截器交给InstrumentEngine来实现
                 closeMethod.addScopedInterceptor(DataSourceCloseInterceptor.class, DruidConstants.SCOPE);
 
                 // constructor

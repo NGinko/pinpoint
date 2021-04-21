@@ -55,12 +55,14 @@ public class DefaultPluginSetup implements PluginSetup {
         final GuardProfilerPluginSetupContext guardSetupContext = new GuardProfilerPluginSetupContext(setupContext);
 
         final InstrumentContext instrumentContext = new PluginInstrumentContext(profilerConfig, instrumentEngine, dynamicTransformTrigger, classInjector, transformerRegistry);
+        //对每个插件都需要设置transformTemplate
         final GuardInstrumentContext guardInstrumentContext = preparePlugin(profilerPlugin, instrumentContext);
         try {
             // WARN external plugin api
             if (logger.isInfoEnabled()) {
                 logger.info("{} Plugin setup", profilerPlugin.getClass().getName());
             }
+            //具体调用插件的setup方法
             profilerPlugin.setup(guardSetupContext);
         } finally {
             guardSetupContext.close();

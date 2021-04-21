@@ -68,7 +68,7 @@ public class DefaultClassFileTransformerDispatcher implements ClassFileTransform
         if (internalName == null) {
             return null;
         }
-
+        //跳过 pinpoint packages 不进行转换
         if (!pinpointClassFilter.accept(classLoader, internalName, classBeingRedefined, protectionDomain, classFileBuffer)) {
             return null;
         }
